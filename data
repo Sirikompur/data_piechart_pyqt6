@@ -1,0 +1,70 @@
+'''
+Created on 21 Nov 2022
+
+@author: sercan_oguz
+'''
+import sys
+from PyQt6 import QtCore, QtWidgets
+from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QLineEdit
+from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtCore import QSize    
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(7,5))#figsize ekran genişliği için
+class MainWindow(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+
+        self.setMinimumSize(QSize(320, 140))    
+        self.setWindowTitle("DATA PİE CHART") 
+
+        self.nameLabel = QLabel(self)
+        self.nameLabel.setText('DATA:')
+        self.line = QLineEdit(self)
+
+        self.line.move(80, 20)
+        self.line.resize(200, 32)
+        self.nameLabel.move(20, 20)
+
+        pybutton = QPushButton('OK', self)
+        pybutton.clicked.connect(self.clickMethod)
+        pybutton.resize(200,32)
+        pybutton.move(80, 60)        
+
+    def clickMethod(self):
+        data = self.line.text() 
+        #txt=("maya.exe 06:51, Lighthouse.exe 00:48, Nuke13.2.exe 00:42, slack.exe 00:40, explorer.exe 00:23, deadlinemonitor.exe 00:19, Others 01:03")
+        x = data.split(',')
+        kullanim=[]
+        location=[]
+        w=0
+        print(x,"\n")
+        for i in  range(len(x))  :
+            y=x[i].split()
+            minute = [int(n) for n in y[1].split(':')]
+            w = 60*minute[0]+minute[1]+w
+            print(w)
+        for i in  range(len(x))  :
+            y=x[i].split()
+            minute = [int(n) for n in y[1].split(':')]
+            t = 60*minute[0]+minute[1]
+            print(y[0],'=',t,'sn\n')
+            a = y[0]
+            b = t
+            kullanim.append(b)
+            location.append(a)
+        renkler = ['#FF6666', '#468499', '#ff7f50', '#ffdab9','#00CED1', '#ffff66','#088DA5']
+        plt.pie(kullanim,labels=location,colors=renkler,shadow=True,explode=[0.1,0,0,0,0,0,0],startangle=90)
+        #ilki kullanım için ikincisi isimler için üçünsüü renkler 4. gölgelendirme 5.si birini ayırma
+        plt.show()
+        
+        
+        
+        
+        
+        
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    mainWin = MainWindow()
+    mainWin.show()
+    sys.exit( app.exec() )
