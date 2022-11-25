@@ -4,22 +4,28 @@ Created on 21 Nov 2022
 @author: sercan_oguz
 '''
 import sys
-from PyQt6 import QtCore, QtWidgets
-from PyQt6.QtWidgets import QMainWindow, QWidget, QLabel, QLineEdit
+from PyQt6 import  QtWidgets
+from PyQt6.QtWidgets import QMainWindow,  QLabel, QLineEdit
 from PyQt6.QtWidgets import QPushButton
 from PyQt6.QtCore import QSize    
 import matplotlib.pyplot as plt
-fig, ax = plt.subplots(figsize=(7,5))#figsize ekran genişliği için
+
+renkler = ['#FF6666', '#468499', '#ff7f50', '#ffdab9','#00CED1', '#ffff66','#FABCDE','#FDDDDD']
+#fig, ax = plt.subplots(figsize=(15,15))#figsize ekran genişliği için
+fig, ax = plt.subplots(figsize=(10,7))#figsize ekran genişliği için
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-
-        self.setMinimumSize(QSize(320, 140))    
+    
+        self.setMinimumSize(QSize(900, 140))    
         self.setWindowTitle("DATA PİE CHART") 
+        #self.setWindowFlag(False) ????
 
         self.nameLabel = QLabel(self)
         self.nameLabel.setText('DATA:')
         self.line = QLineEdit(self)
+        self.line.setMinimumSize(750, 35)
 
         self.line.move(80, 20)
         self.line.resize(200, 32)
@@ -32,43 +38,49 @@ class MainWindow(QMainWindow):
 
     def clickMethod(self):
         data = self.line.text() 
-        #txt=("maya.exe 06:51, Lighthouse.exe 00:48, Nuke13.2.exe 00:42, slack.exe 00:40, explorer.exe 00:23, deadlinemonitor.exe 00:19, Others 01:03")
+        #data=("maya.exe 06:51, Lighthouse.exe 00:48, Nuke13.2.exe 00:42, slack.exe 00:40, explorer.exe 00:23, deadlinemonitor.exe 00:19, Others 01:03")
         x = data.split(',')
-        kullanim=[]
-        location=[]
-        w=0
-        #bar=14
-        #print(x,"\n")
+        working_times=[]
+        app_exe=[]
+        colorss=[]
+        legend = []
+        pers = []
+        work=0
+
         for i in  range(len(x))  :
             y=x[i].split()
             minute = [int(n) for n in y[1].split(':')]
-            w = 60*minute[0]+minute[1]+w
-            #print(w)
+            workingtime = 60*minute[0]+minute[1]
+            work = workingtime+work
+            working_times.append(workingtime)
+            app_exe.append(y[0])
+            colorss.append(renkler[i])
+            
         for i in  range(len(x))  :
             y=x[i].split()
-            minute = [int(n) for n in y[1].split(':')]
-            t = 60*minute[0]+minute[1]
-            #print(y[0],'=',t,'sn\n')
-            a = y[0]
-            b = t
-            kullanim.append(b)
-            location.append(a)
-        renkler = ['#FF6666', '#468499', '#ff7f50', '#ffdab9','#00CED1', '#ffff66','#088DA5']
-        plt.pie(kullanim,labels=location,colors=renkler,shadow=True,explode=[0.1,0,0,0,0,0,0],startangle=90, autopct='%1.1f%%')
-        #ilki kullanım için ikincisi isimler için üçünsüü renkler 4. gölgelendirme 5.si birini ayırma
+            per = int ((100*working_times[i])/work)
+            pers.append(per)
+            print(y[0] ,'--> %',per) 
+            
+        
+             
+        plt.pie(working_times, colors=colorss, startangle=90,radius=3)
+        legend = ['%s, %1.1f %%' % (l, s) for l, s in zip(app_exe, pers)]
+        plt.legend(legend, loc="best")
+# Set aspect ratio to be equal so that pie is drawn as a circle.
+        plt.axis('equal')
+        plt.tight_layout()
+
+        
         plt.show()
-        '''
-        for i in  range(len(x))  :
-            y=x[i].split()
-            minute = [int(n) for n in y[1].split(':')]
-            z = 60*minute[0]+minute[1]
-            per=int ((z*100)/w)
-            print(y[0] ,'--> %',per)       
+        
+ 
+                  
              
         
         #self.bar.textChanged.connect(self.namelabel.setText)
 
-       '''
+       
 
 
 
